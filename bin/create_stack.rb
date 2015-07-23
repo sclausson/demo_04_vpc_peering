@@ -19,13 +19,15 @@ cfn = AWS::CloudFormation.new
 
 def parameters
   parameters = {
-    "defaultVpcCidr"            => @opts[:default_vpc_cidr],
-    "defaultVpcId"              => @opts[:default_vpc_id],
-    "defaultVpcRouteTableId"    => @opts[:default_route_table_id],
-    "newVpcCidr"                => @vpc_stack.vpc('VPC').cidr_block,
-    "newVpcId"                  => @vpc_stack.vpc('VPC').id,
-    "newVpcRouteTableId"        => @vpc_stack.route_table('PublicRouteTable').id,
-    "newVpcDefaultSgId"         => @vpc_stack.vpc('VPC').security_groups.find { |sg| sg.name == 'default' }.id
+    "defaultVpcCidr"                  => @opts[:default_vpc_cidr],
+    "defaultVpcId"                    => @opts[:default_vpc_id],
+    "defaultVpcRouteTableId"          => @opts[:default_route_table_id],
+    "newVpcCidr"                      => @vpc_stack.vpc('VPC').cidr_block,
+    "newVpcId"                        => @vpc_stack.vpc('VPC').id,
+    "newVpcPublicRouteTableId"        => @vpc_stack.route_table('PublicRouteTable').id,
+    "newVpcAz1PrivateRouteTableId"    => @vpc_stack.route_table('Az1PrivateRouteTable').id,
+    "newVpcAz2PrivateRouteTableId"    => @vpc_stack.route_table('Az2PrivateRouteTable').id,
+    "newVpcDefaultSgId"               => @vpc_stack.vpc('VPC').security_groups.find { |sg| sg.name == 'default' }.id
   }
   return parameters
 end

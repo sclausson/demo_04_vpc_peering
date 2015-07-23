@@ -32,8 +32,16 @@
           "Description" : "Main route table ID for the defaul VPC",
           "Type" : "String"
         },
-        "newVpcRouteTableId" : {
+        "newVpcPublicRouteTableId" : {
           "Description" : "Public route table ID for the new VPC",
+          "Type" : "String"
+        },
+        "newVpcAz1PrivateRouteTableId" : {
+          "Description" : "Az1 Private route table ID for the new VPC",
+          "Type" : "String"
+        },
+        "newVpcAz2PrivateRouteTableId" : {
+          "Description" : "Az2 Private route table ID for the new VPC",
           "Type" : "String"
         },
         "newVpcDefaultSgId" : {
@@ -42,11 +50,27 @@
         }
     },
     "Resources": {        
-        "PeeringRoute1" : {
+        "NewVpcPublicPeeringRoute" : {
             "Type" : "AWS::EC2::Route",
             "Properties" : {
                 "DestinationCidrBlock": { "Ref" : "defaultVpcCidr" },
-                "RouteTableId" : { "Ref" : "newVpcRouteTableId" },
+                "RouteTableId" : { "Ref" : "newVpcPublicRouteTableId" },
+                "VpcPeeringConnectionId" : { "Ref" : "VPCPeeringConnection" }
+            }
+        },
+        "NewVpcAz1PrivatePeeringRoute" : {
+            "Type" : "AWS::EC2::Route",
+            "Properties" : {
+                "DestinationCidrBlock": { "Ref" : "defaultVpcCidr" },
+                "RouteTableId" : { "Ref" : "newVpcAz1PrivateRouteTableId" },
+                "VpcPeeringConnectionId" : { "Ref" : "VPCPeeringConnection" }
+            }
+        },
+        "NewVpcAz2PrivatePeeringRoute" : {
+            "Type" : "AWS::EC2::Route",
+            "Properties" : {
+                "DestinationCidrBlock": { "Ref" : "defaultVpcCidr" },
+                "RouteTableId" : { "Ref" : "newVpcAz2PrivateRouteTableId" },
                 "VpcPeeringConnectionId" : { "Ref" : "VPCPeeringConnection" }
             }
         },
