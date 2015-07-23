@@ -1,0 +1,89 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creates a peering connection between the default VPC and an existing VPC that you specify.",
+    "Parameters": {
+        "defaultVpcId" : {
+          "Description" : "VPC ID of Default VPC",
+          "Type" : "AWS::EC2::VPC::Id"
+        },
+        "newVpcId" : {
+          "Description" : "VPC ID of the new VPC",
+          "Type" : "AWS::EC2::VPC::Id"
+        },
+        "defaultVpcCidr": {
+            "Description": "The IP address range for your new VPC.",
+            "Type": "String",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "Default": "172.30.0.0/16",
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+            "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+        },
+        "newVpcCidr": {
+            "Description": "The IP address range for your new Private VPC.",
+            "Type": "String",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "Default": "10.1.0.0/16",
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+            "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+        }, 
+        "defaultVpcRouteTableId" : {
+          "Description" : "Main route table ID for the defaul VPC",
+          "Type" : "String"
+        },
+        "newVpcRouteTableId" : {
+          "Description" : "Public route table ID for the new VPC",
+          "Type" : "String"
+        },
+        "newVpcDefaultSgId" : {
+          "Description" : "Security Group ID of the Default Security Group in the Default VPC",
+          "Type" : "AWS::EC2::SecurityGroup::Id"
+        }
+    },
+    "Resources": {        
+        "PeeringRoute1" : {
+            "Type" : "AWS::EC2::Route",
+            "Properties" : {
+                "DestinationCidrBlock": { "Ref" : "defaultVpcCidr" },
+                "RouteTableId" : { "Ref" : "newVpcRouteTableId" },
+                "VpcPeeringConnectionId" : { "Ref" : "VPCPeeringConnection" }
+            }
+        },
+        "PeeringRoute2" : {
+            "Type" : "AWS::EC2::Route",
+            "Properties" : {
+                "DestinationCidrBlock": { "Ref" : "newVpcCidr" },
+                "RouteTableId" : { "Ref" : "defaultVpcRouteTableId" },
+                "VpcPeeringConnectionId" : { "Ref" : "VPCPeeringConnection" }
+            }
+        },
+        "NewVpcDefaultSgInboundSshRule": {
+          "Type": "AWS::EC2::SecurityGroupIngress",
+          "Properties":{
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": { "Ref" : "defaultVpcCidr" },
+            "GroupId": { "Ref" : "newVpcDefaultSgId" }
+          }
+        },
+        "NewVpcDefaultSgInboundIcmpRule": {
+          "Type": "AWS::EC2::SecurityGroupIngress",
+          "Properties":{
+            "IpProtocol": "icmp",
+            "FromPort": "8",
+            "ToPort": "-1",
+            "CidrIp": { "Ref" : "defaultVpcCidr" },
+            "GroupId": { "Ref" : "newVpcDefaultSgId" }
+          }
+        },
+        "VPCPeeringConnection": {
+            "Type": "AWS::EC2::VPCPeeringConnection",
+            "Properties": {
+                "VpcId": {"Ref": "defaultVpcId"},
+                "PeerVpcId": {"Ref": "newVpcId"}
+            }
+        }
+    }
+}

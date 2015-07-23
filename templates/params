@@ -1,0 +1,7 @@
+defaultVpcCidr          172.30.0.0/16
+defaultVpcId            vpc-4696cf23
+defaultVpcRouteTableId  rtb-b74c7ad2
+newVpcCidr              10.1.0.0/16
+newVpcDefaultSgId       sg-6f914e08
+newVpcId                vpc-a5f4edc0
+newVpcRouteTableId      rtb-21824445
